@@ -11,8 +11,8 @@ numbers for this exercise. Fractional amounts can have floating-point rounding.
 
 ## Tools
 
-Python 3.10+, FastAPI, Pydantic and Uvicorn. Tests use pytest and FastAPI's
-TestClient, which uses HTTPX2.
+Python 3.11+, FastAPI, Pydantic and Uvicorn. Tests use pytest and FastAPI's
+`TestClient`. The test client uses the `httpx2` package, which requires Python 3.11 or later.
 
 ## Set up and run
 
@@ -67,4 +67,4 @@ python -m pytest -v
 ```
 
 Unit tests call 	ransfer() with fresh accounts and history. API tests use
-TestClient(app) to check status codes and JSON without starting Uvicorn.
+`TestClient(app)` to check status codes and JSON without starting Uvicorn.

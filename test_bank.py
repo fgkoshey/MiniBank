@@ -2,7 +2,6 @@ from bank import transfer
 def test_insufficient_funds():
     accounts = {"alex": 1500, "max": 1000}
     history = []
-    transfer(accounts,history,"alex","max",2000)
     assert transfer(accounts, history, "alex", "max", 2000) is False
     assert accounts["alex"] == 1500
     assert accounts["max"] == 1000
