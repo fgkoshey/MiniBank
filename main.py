@@ -1,7 +1,7 @@
 from threading import Lock
 
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, StrictFloat, StrictInt
+from pydantic import BaseModel, StrictFloat, StrictInt,field_validator
 
 from bank import accounts, history, transfer
 
@@ -52,3 +52,19 @@ def create_transfer(request: TransferRequest) -> dict:
 def list_transactions() -> list[dict]:
     with bank_lock:
         return [transaction.copy() for transaction in history]
+class AccountCreate(BaseModel):
+    username: str
+    @field_validator("username")
+    @classmethod
+    def check_username(cls,value:str) -> str:
+        cleaned_value = value.strip()
+        if not cleaned_value:
+            raise ValueError("Username cannot be empty")
+        return cleaned_value
+@app.post("/accounts",status_code=201)
+def createaccount(request: AccountCreate):
+    with bank_lock:
+        if request.username in accounts:
+            raise HTTPException(status_code=409,detail=f"Username {request.username} is already taken")
+        accounts[request.username]=0
+        return {"username": request.username, "balance": 0}

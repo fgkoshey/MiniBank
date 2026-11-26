@@ -98,3 +98,25 @@ def test_transfer_requires_amount(client):
     response = client.post("/transfers", json={"sender": "alex", "receiver": "max"})
 
     assert response.status_code == 422
+def test_add_account(client):
+    response = client.post("/accounts",json={"username": "ivan"})
+    assert response.status_code == 201
+    assert response.json() == {"username": "ivan","balance": 0}
+def test_duplicate(client):
+    response = client.post("/accounts",json={"username": "alex"})
+    assert response.status_code == 409
+    assert client.get("/accounts/alex").json()["balance"] == 1500
+@pytest.mark.parametrize(
+"payload",
+[    {"username": ""},
+{"username": "   "},
+{}],
+)
+def test_unvalid_names(client,payload):
+    response = client.post("/accounts",json=payload)
+    accounts_response = client.get("/accounts")
+    assert response.status_code==422
+    assert accounts_response.json() == [
+    {"username": "alex", "balance": 1500},
+    {"username": "max", "balance": 1000}
+]
